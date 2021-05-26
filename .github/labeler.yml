@@ -1,0 +1,24 @@
+modules:
+    - node_modules/*
+    - node_modules/**/*
+
+source:
+    - index.js
+
+controller:
+    - controllers/*
+
+service:
+    - helpers/*
+
+documentation:
+    - '*.md'
+
+package:
+    - package.json
+    - package-lock.json
+
+config:
+    - .eslintrc.cjs
+    - .eslintignore
+    - .vscode/*

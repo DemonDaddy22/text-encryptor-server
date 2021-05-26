@@ -1,0 +1,22 @@
+name: 'Perform Lint'
+on:
+    pull_request:
+    push:
+        branches:
+            - 'master'
+jobs:
+    test:
+        strategy:
+            matrix:
+                node-version:
+                    - 14
+        runs-on: ubuntu-latest
+        steps:
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: Install dependencies
+              run: npm i
+            - name: Perform linting
+              run: npm run lint:fix

@@ -1,12 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import { v4 as uuidv4, validate as uuidValidate, version as uuidVersion } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+import uuidValidateV4 from './helpers/validateUUID.js';
+import Message from './models/Message.js';
 
 const app = express();
 
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+    extended: true 
+}));
 app.use(express.json());
 
 const port = process.env.PORT || 5050;
@@ -23,24 +27,18 @@ const db = mongoose.connection;
 db.on('error', err => console.error(err));
 db.once('open', () => console.log('> Database connection established'));
 
-const uuidValidateV4 = (uuid) => uuidValidate(uuid) && uuidVersion(uuid) === 4;
-
-const MessageSchema = new mongoose.Schema({
-    content: {
-        type: String,
-        required: true,
-    },
-    _id: String,
-});
-
-const Message = mongoose.model('message', MessageSchema);
-
 app.listen(port, () => `> Serving on PORT: ${port}`);
 
 app.get('/', async (req, res) => {
     const content = `Lorem ipsum amet minim adipisicing excepteur amet sit incididunt do laborum. Et excepteur et ipsum mollit tempor do reprehenderit ullamco minim.`;
     const _id = uuidv4();
-    const message = new Message({ _id, content });
+    const message = new Message({ 
+        _id,
+        content,
+        url: 'asasasfas',
+        createdAt: new Date().getTime(),
+        validFor: 360 * 60 * 1000
+    });
     await message.save();
     res.send(message);
 });

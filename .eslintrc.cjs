@@ -37,10 +37,17 @@ module.exports = {
             },
         ],
         'eqeqeq': 1,
-        'array-bracket-spacing': [1, 'always'],
+        'array-bracket-spacing': 1,
         'object-curly-spacing': [1, 'always'],
+        'object-curly-newline': [1, {
+            'ObjectExpression': 'always', 'ObjectPattern': {
+                'multiline': true 
+            } 
+        }],
         'camelcase': 1,
         'indent': 2,
-        'max-len': [2, { code: 120, tabWidth: 4, ignoreTemplateLiterals: true }],
+        'max-len': [2, {
+            code: 120, tabWidth: 4, ignoreTemplateLiterals: true 
+        }],
     }
 };

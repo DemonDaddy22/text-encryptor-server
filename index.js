@@ -46,7 +46,7 @@ app.get('/', async (req, res) => {
     res.send(message);
 });
 
-app.get('/:id', async (req, res) => {
+app.get('/api/v1/messages/:id', async (req, res) => {
     const { id } = req.params;
     if (id && uuidValidateV4(id)) {
         const message = await Message.findById(id);
@@ -54,4 +54,18 @@ app.get('/:id', async (req, res) => {
     } else {
         res.send('Invalid ID');
     }
+});
+
+app.post('/api/v1/messages', async (req, res) => {
+    const { content, validFor } = req.body;
+    const _id = uuidv4();
+    const message = new Message({ 
+        _id,
+        content,
+        validFor,
+        url: '',
+        createdAt: new Date().getTime(),
+    });
+    await message.save();
+    res.send(message);
 });

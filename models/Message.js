@@ -23,7 +23,7 @@ const MessageSchema = new Schema({
     validFor: {
         type: Number,
         required: true,
-    }
+    },
 });
 
 MessageSchema.plugin(encrypt, {

@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { v4 as uuidv4 } from 'uuid';
 import SwooshError from '../errors/SwooshError';
 import uuidValidateV4 from '../helpers/validateUUID';
@@ -11,6 +14,13 @@ const createContentController = async (req, res, next) => {
         const error = new SwooshError(
             400,
             'Bad request: Missing either content or valid for duration'
+        );
+        return next(error);
+    }
+    if (!isNaN(validFor) || validFor < process.env.MIN_VALID_FOR) {
+        const error = new SwooshError(
+            400,
+            'Bad request: Invalid valid for duration provided'
         );
         return next(error);
     }

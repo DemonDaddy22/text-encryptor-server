@@ -13,14 +13,14 @@ const createContentController = async (req, res, next) => {
     if (!content || !validFor) {
         const error = new SwooshError(
             400,
-            'Bad request: Missing either content or valid for duration'
+            'Bad request: Missing either content or validFor duration'
         );
         return next(error);
     }
-    if (!isNaN(validFor) || validFor < process.env.MIN_VALID_FOR) {
+    if (isNaN(validFor) || validFor < process.env.MIN_VALID_FOR) {
         const error = new SwooshError(
             400,
-            'Bad request: Invalid valid for duration provided'
+            'Bad request: Invalid validFor duration provided'
         );
         return next(error);
     }

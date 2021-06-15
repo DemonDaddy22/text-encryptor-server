@@ -1,12 +1,7 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { v4 as uuidv4 } from 'uuid';
-import TinyURL from 'tinyurl';
 import SwooshError from '../errors/SwooshError';
 import uuidValidateV4 from '../helpers/validateUUID';
 import Message from '../models/Message';
-import isValidTinyURL from '../helpers/validateTinyURL';
 
 // creates a new content document for content and validFor
 // if one of content or validFor is missing, throws error
@@ -15,33 +10,20 @@ const createContentController = async (req, res, next) => {
     if (!content || !validFor) {
         const error = new SwooshError(
             400,
-            'Bad request: Missing either content or validFor duration'
-        );
-        return next(error);
-    }
-    if (isNaN(validFor) || validFor < process.env.MIN_VALID_FOR) {
-        const error = new SwooshError(
-            400,
-            'Bad request: Invalid validFor duration provided'
+            'Bad request: Missing either content or valid for duration'
         );
         return next(error);
     }
     const _id = uuidv4();
-    let url = `${process.env.CLIENT_BASE_URI}${_id}`;
-    const tinyUrl = await TinyURL.shorten(url);
-    url = isValidTinyURL(tinyUrl) ? tinyUrl : url;
     const message = new Message({
         _id,
         content,
         validFor,
-        url,
+        url: `${process.env.CLIENT_BASE_URI}${_id}`,
         createdAt: new Date().getTime(),
     });
     await message.save();
-    res.status(200).send({
-        status: 200,
-        data: { url: message.url },
-    });
+    res.send(message);
 };
 
 // Verifies if the ID is valid

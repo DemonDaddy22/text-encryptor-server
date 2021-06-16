@@ -2,9 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { v4 as uuidv4 } from 'uuid';
+import TinyURL from 'tinyurl';
 import SwooshError from '../errors/SwooshError';
 import uuidValidateV4 from '../helpers/validateUUID';
 import Message from '../models/Message';
+import isValidTinyURL from '../helpers/validateTinyURL';
 
 // creates a new content document for content and validFor
 // if one of content or validFor is missing, throws error
@@ -25,15 +27,21 @@ const createContentController = async (req, res, next) => {
         return next(error);
     }
     const _id = uuidv4();
+    let url = `${process.env.CLIENT_BASE_URI}${_id}`;
+    const tinyUrl = await TinyURL.shorten(url);
+    url = isValidTinyURL(tinyUrl) ? tinyUrl : url;
     const message = new Message({
         _id,
         content,
         validFor,
-        url: `${process.env.CLIENT_BASE_URI}${_id}`,
+        url,
         createdAt: new Date().getTime(),
     });
     await message.save();
-    res.send(message);
+    res.status(200).send({
+        status: 200,
+        data: { url: message.url },
+    });
 };
 
 // Verifies if the ID is valid

@@ -29,8 +29,8 @@ const MessageSchema = new Schema({
 MessageSchema.plugin(encrypt, {
     encryptionKey: process.env.ENCRYPTION_KEY,
     signingKey: process.env.SIGN_KEY,
-    encryptedFields: ['content'],
-    decryptPostSave: false,
+    encryptedFields: ['content', 'validFor', 'url'],
+    decryptPostSave: true,
 });
 
 const Message = mongoose.model('message', MessageSchema);

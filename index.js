@@ -6,11 +6,11 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import asyncErrorHandler from './helpers/asyncErrorHandler.js';
+import asyncErrorHandler from './helpers/asyncErrorHandler';
 import {
     createContentController,
     findContentByIdController,
-} from './controllers/messageControllers.js';
+} from './controllers/messageController';
 
 const app = express();
 
@@ -32,7 +32,7 @@ const db = mongoose.connection;
 db.on('error', (err) => console.error(err));
 db.once('open', () => console.log('> Database connection established'));
 
-app.listen(port, () => `> Serving on PORT: ${port}`);
+app.listen(port, () => console.log(`> Serving on PORT: ${port}`));
 
 // route to create new content message
 app.post('/api/v1/messages', asyncErrorHandler(createContentController));

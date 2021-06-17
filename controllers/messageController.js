@@ -9,13 +9,14 @@ import Message from '../models/Message';
 import isValidTinyURL from '../helpers/validateTinyURL';
 
 // creates a new content document for content and validFor
-// if one of content or validFor is missing, throws error
+// requires a secretKey which must be used for message decryption
+// if any of content, secretKey or validFor is missing, throws error
 const createContentController = async (req, res, next) => {
-    const { content, validFor } = req.body;
-    if (!content || !validFor) {
+    const { content, validFor, secretKey } = req.body;
+    if (!content || !validFor || !secretKey) {
         const error = new SwooshError(
             400,
-            'Bad request: Missing either content or validFor duration'
+            'Bad request: Missing either content, secretKey or validFor duration'
         );
         return next(error);
     }
@@ -33,6 +34,7 @@ const createContentController = async (req, res, next) => {
     const message = new Message({
         _id,
         content,
+        secretKey,
         validFor,
         url,
         createdAt: new Date().getTime(),
@@ -47,10 +49,12 @@ const createContentController = async (req, res, next) => {
 // Verifies if the ID is valid
 // If valid, checks if entry exists in the DB corresponding to the ID
 // If entry exists, check if it has expired or not
+// If entry has not expired, check if secretKey matches with the one provided
 // else throws error
 const findContentByIdController =
     (respondWithContent) => async (req, res, next) => {
         const { id } = req.params;
+        const { secretKey } = req.body;
         if (id && uuidValidateV4(id)) {
             const message = await Message.findById(id);
             if (!message) {
@@ -76,6 +80,19 @@ const findContentByIdController =
                         expired: true,
                         data: `The content corresponding to ${id} is no longer valid.`,
                     },
+                });
+            }
+            if (respondWithContent && !secretKey) {
+                const error = new SwooshError(
+                    400,
+                    'Bad request: Missing secretKey'
+                );
+                return next(error);
+            }
+            if (message.secretKey !== secretKey) {
+                return res.status(200).send({
+                    status: 200,
+                    data: 'Invalid secret key',
                 });
             }
             res.status(200).send({

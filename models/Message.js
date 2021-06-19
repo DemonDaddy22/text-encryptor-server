@@ -12,6 +12,10 @@ const MessageSchema = new Schema({
         type: String,
         required: true,
     },
+    secretKey: {
+        type: String,
+        required: true,
+    },
     url: {
         type: String,
         required: true,
@@ -29,7 +33,7 @@ const MessageSchema = new Schema({
 MessageSchema.plugin(encrypt, {
     encryptionKey: process.env.ENCRYPTION_KEY,
     signingKey: process.env.SIGN_KEY,
-    encryptedFields: ['content', 'validFor', 'url'],
+    encryptedFields: ['content', 'secretKey', 'validFor', 'url'],
     decryptPostSave: true,
 });
 

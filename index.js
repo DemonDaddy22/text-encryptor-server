@@ -49,12 +49,15 @@ app.get(
     asyncErrorHandler(findContentByIdController(true))
 );
 
+// error handling middleware
 app.use((err, req, res, next) => {
     let { message = 'Internal Server Error', status = 500, name } = err;
     res.status(status).send({
-        message,
         status,
-        name,
-        error: true,
+        data: null,
+        error: {
+            message,
+            name,
+        },
     });
 });

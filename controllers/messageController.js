@@ -54,7 +54,7 @@ const createContentController = async (req, res, next) => {
 const findContentByIdController =
     (respondWithContent) => async (req, res, next) => {
         const { id } = req.params;
-        const { secretKey } = req.body;
+        const { secretKey } = req.query;
         if (id && uuidValidateV4(id)) {
             const message = await Message.findById(id);
             if (!message) {
@@ -89,7 +89,7 @@ const findContentByIdController =
                 );
                 return next(error);
             }
-            if (message.secretKey !== secretKey) {
+            if (respondWithContent && message.secretKey !== secretKey) {
                 return res.status(200).send({
                     status: 200,
                     data: 'Invalid secret key',

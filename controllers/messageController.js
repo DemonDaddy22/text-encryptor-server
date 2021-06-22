@@ -42,7 +42,8 @@ const createContentController = async (req, res, next) => {
     await message.save();
     res.status(200).send({
         status: 200,
-        data: { url: message.url },
+        error: null,
+        data: { url: message.url, message: '' },
     });
 };
 
@@ -75,10 +76,11 @@ const findContentByIdController =
                 await Message.findByIdAndDelete(id);
                 return res.status(200).send({
                     status: 200,
+                    error: null,
                     data: {
                         id,
                         expired: true,
-                        data: `The content corresponding to ${id} is no longer valid.`,
+                        message: `The content corresponding to ${id} is no longer valid.`,
                     },
                 });
             }
@@ -90,14 +92,16 @@ const findContentByIdController =
                 return next(error);
             }
             if (respondWithContent && message.secretKey !== secretKey) {
-                return res.status(200).send({
-                    status: 200,
-                    data: 'Invalid secret key',
-                });
+                const error = new SwooshError(400, 'Invalid secret key');
+                return next(error);
             }
             res.status(200).send({
                 status: 200,
-                data: respondWithContent ? { content: message.content } : true,
+                error: null,
+                data: {
+                    message: respondWithContent ? message.content : '',
+                    expired: false,
+                },
             });
         } else {
             const error = new SwooshError(400, 'Invalid ID');

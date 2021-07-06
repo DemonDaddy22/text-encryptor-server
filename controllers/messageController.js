@@ -77,7 +77,7 @@ const findContentByIdController =
                     data: {
                         id,
                         expired: true,
-                        message: `The content is no longer valid.`,
+                        message: 'The content is no longer valid.',
                     },
                 });
             }

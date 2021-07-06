@@ -59,10 +59,7 @@ const findContentByIdController =
         if (id && uuidValidateV4(id)) {
             const message = await Message.findById(id);
             if (!message) {
-                const error = new SwooshError(
-                    404,
-                    `No message found for ${id}`
-                );
+                const error = new SwooshError(404, 'No message found for');
                 return next(error);
             }
             const createdAt = new Date(message.createdAt).getTime();
@@ -80,7 +77,7 @@ const findContentByIdController =
                     data: {
                         id,
                         expired: true,
-                        message: `The content corresponding to ${id} is no longer valid.`,
+                        message: `The content is no longer valid.`,
                     },
                 });
             }

@@ -59,7 +59,7 @@ const findContentByIdController =
         if (id && uuidValidateV4(id)) {
             const message = await Message.findById(id);
             if (!message) {
-                const error = new SwooshError(404, 'No message found for');
+                const error = new SwooshError(404, 'No message found');
                 return next(error);
             }
             const createdAt = new Date(message.createdAt).getTime();
